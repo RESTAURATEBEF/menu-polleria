@@ -69,22 +69,22 @@ menu_actual = cargar_menu()
 st.markdown(
     """
     <style>
-    /* Ocultar elementos nativos de Streamlit (Barra superior, Menú y Coronita flotante) */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-    .stAppViewerFooter {display: none !important;}
-    div[data-testid="stStatusWidget"] {display: none !important;}
-    button[title="View app in Streamlit Community Cloud"] {display: none !important;}
-
+    /* Ocultar barra superior, menú, pie de página y la coronita flotante */
+    #MainMenu, header, footer {visibility: hidden !important; display: none !important;}
+    .stAppViewerFooter, .stAppHeader, [data-testid="stHeader"] {display: none !important;}
+    [data-testid="stStatusWidget"], [data-testid="stDecoration"] {display: none !important;}
+    button[title*="Streamlit"], button[aria-label*="Streamlit"] {display: none !important;}
+    
+    /* Ajuste para eliminar espacio superior de la barra oculta */
     .stApp {
         background-color: #120A05;
         color: #FFFFFF;
         font-family: 'Helvetica Neue', sans-serif;
+        margin-top: -50px !important;
     }
 
     .block-container {
-        padding-top: 1.5rem !important;
+        padding-top: 1rem !important;
         padding-bottom: 3rem !important;
     }
 
@@ -227,6 +227,24 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# JavaScript para forzar la eliminación de la coronita y elementos flotantes del DOM padre
+st.components.v1.html(
+    """
+    <script>
+    const parentDoc = window.parent.document;
+    function ocultarIconosStreamlit() {
+        const elementos = parentDoc.querySelectorAll('.stAppViewerFooter, [data-testid="stHeader"], footer, #MainMenu');
+        elementos.forEach(el => {
+            el.style.display = 'none';
+            el.style.visibility = 'hidden';
+        });
+    }
+    setInterval(ocultarIconosStreamlit, 300);
+    </script>
+    """,
+    height=0,
+)
+
 # 4. Encabezado Curvado
 NOMBRE_RESTAURANTE = "CHIFA MILAGRITOS"
 
@@ -275,7 +293,7 @@ st.markdown(
 
 st.divider()
 
-# 6. Mapeo optimizado
+# 6. Mapeo de opciones
 lista_items = menu_actual.get("segundos", [])
 opciones_segundos = ["Ninguno"] + [
     f"{item['nombre']} - S/ {item['precio']:.2f}" for item in lista_items
@@ -302,7 +320,7 @@ pedidos_realizados = []
 total_acumulado = 0.0
 
 
-# Extracción exacta del precio del texto visible en la opción
+# Extracción exacta del precio directamente de la etiqueta seleccionada
 def extraer_precio(seleccion, lista_base):
     if seleccion == "Ninguno":
         return 0.0, seleccion
@@ -373,7 +391,7 @@ obs_input = st.text_area(
     key="txt_obs",
 )
 
-# JavaScript para restringir números sólo en Observaciones
+# JavaScript para restringir números sólo en el campo de observaciones
 st.components.v1.html(
     """
     <script>
