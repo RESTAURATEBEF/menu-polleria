@@ -11,18 +11,18 @@ st.set_page_config(
     layout="centered",
 )
 
-# Cambiamos la versión del archivo JSON para aplicar la nueva estructura limpia
-ARCHIVO_MENU = "menu_chifa_v3.json"
+# Cambiamos la versión a v4 para forzar la actualización de la base de datos
+ARCHIVO_MENU = "menu_chifa_v4.json"
 
-# Datos por defecto corregidos sin precios entre paréntesis en el nombre
+# Nombres únicos para evitar duplicidad al buscar en el diccionario
 DATOS_POR_DEFECTO = {
     "segundos": [
         {"nombre": "Caldo de Gallina Solo", "precio": 5.0},
-        {"nombre": "Caldo de Gallina con Presa de", "precio": 7.0},
-        {"nombre": "Caldo de Gallina con Presa de", "precio": 6.0},
+        {"nombre": "Caldo de Gallina con Presa (S/ 7.00)", "precio": 7.0},
+        {"nombre": "Caldo de Gallina con Presa (S/ 6.00)", "precio": 6.0},
         {"nombre": "Chaufa de Pollo", "precio": 9.0},
-        {"nombre": "Chaufa con Alitas de", "precio": 12.0},
-        {"nombre": "Chaufa con Alitas de", "precio": 9.0},
+        {"nombre": "Chaufa con Alitas (S/ 12.00)", "precio": 12.0},
+        {"nombre": "Chaufa con Alitas (S/ 9.00)", "precio": 9.0},
         {"nombre": "Chaufa con Tortilla", "precio": 13.0},
         {"nombre": "Chaufa Salvaje", "precio": 11.0},
         {"nombre": "Chaufa Salvaje con Alitas", "precio": 14.0},
@@ -269,10 +269,10 @@ st.markdown(
 
 st.divider()
 
-# 6. Mapeo formateado para el Selectbox (Nombre - S/ Precio)
+# 6. Mapeo optimizado indexado directamente por la posición elegida
+lista_items = menu_actual.get("segundos", [])
 opciones_segundos = ["Ninguno"] + [
-    f"{item['nombre']} - S/ {item['precio']:.2f}"
-    for item in menu_actual.get("segundos", [])
+    f"{item['nombre']} - S/ {item['precio']:.2f}" for item in lista_items
 ]
 
 mesas = [f"Mesa {i}" for i in range(1, 16)]
@@ -296,14 +296,17 @@ pedidos_realizados = []
 total_acumulado = 0.0
 
 
+# Función ajustada para extraer el precio exactamente de la opción seleccionada
 def extraer_precio(seleccion, lista_base):
     if seleccion == "Ninguno":
         return 0.0, seleccion
-    nombre = seleccion.split(" - S/")[0]
-    for item in lista_base:
-        if item["nombre"] == nombre:
-            return item["precio"], nombre
-    return 0.0, nombre
+
+    # Extraemos el precio directamente del texto del Selectbox
+    partes = seleccion.rsplit(" - S/ ", 1)
+    nombre = partes[0]
+    precio = float(partes[1]) if len(partes) > 1 else 0.0
+
+    return precio, nombre
 
 
 for i in range(num_personas):
@@ -326,7 +329,7 @@ for i in range(num_personas):
     seg_sel = st.selectbox(
         "Selecciona el Plato / Bebida:", opciones_segundos, key=f"seg_{i}"
     )
-    p_seg, n_seg = extraer_precio(seg_sel, menu_actual.get("segundos", []))
+    p_seg, n_seg = extraer_precio(seg_sel, lista_items)
 
     subtotal_persona = p_seg
     total_acumulado += subtotal_persona
