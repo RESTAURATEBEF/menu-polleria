@@ -6,36 +6,24 @@ import streamlit as st
 
 # 1. Configuración de la página
 st.set_page_config(
-    page_title="POLLERÍA - Menú Digital",
-    page_icon="🍗",
+    page_title="CHIFA - Menú Digital",
+    page_icon="🥢",
     layout="centered",
 )
 
 # ARCHIVO DE BASE DE DATOS LOCAL
-ARCHIVO_MENU = "menu_polleria_db.json"
+ARCHIVO_MENU = "menu_chifa_db.json"
 
-# Datos por defecto para Pollería
+# Datos por defecto orientados únicamente a Chifa
 DATOS_POR_DEFECTO = {
-    "entradas": [
-        {"nombre": "Tequeños con Guacamole", "precio": 14.0},
-        {"nombre": "Sopa de Pollo / Dieta", "precio": 12.0},
-        {"nombre": "Porción de Anticuchos", "precio": 18.0},
-        {"nombre": "Porción de Mollejitas", "precio": 16.0},
-    ],
     "segundos": [
-        {"nombre": "1/4 de Pollo a la Brasa", "precio": 18.0},
-        {"nombre": "1/2 Pollo a la Brasa", "precio": 34.0},
-        {"nombre": "1 Pollo Entero a la Brasa", "precio": 65.0},
-        {"nombre": "Mostrito (1/4 Pollo + Chaufa)", "precio": 22.0},
-        {"nombre": "Parrilla Familiar", "precio": 85.0},
-    ],
-    "bebidas": [
-        {"nombre": "Inca Kola 1.5L", "precio": 10.0},
-        {"nombre": "Coca Cola 1.5L", "precio": 10.0},
-        {"nombre": "Chicha Morada Jarra 1L", "precio": 12.0},
-        {"nombre": "Limonada Jarra 1L", "precio": 10.0},
-        {"nombre": "Gaseosa Personal 500ml", "precio": 5.0},
-    ],
+        {"nombre": "Arroz Chaufa Especial", "precio": 20.0},
+        {"nombre": "Tallarín Saltado de Pollo", "precio": 18.0},
+        {"nombre": "Kam Lu Wantan", "precio": 32.0},
+        {"nombre": "Pollo Chi Jau Kay", "precio": 25.0},
+        {"nombre": "Pollo Ti Pa Kay", "precio": 25.0},
+        {"nombre": "Aeropuerto de Carne", "precio": 22.0},
+    ]
 }
 
 
@@ -47,7 +35,7 @@ def cargar_menu():
     try:
         with open(ARCHIVO_MENU, "r", encoding="utf-8") as f:
             datos = json.load(f)
-            if datos and isinstance(datos.get("entradas", [])[0], str):
+            if not datos or "segundos" not in datos:
                 return DATOS_POR_DEFECTO
             return datos
     except Exception:
@@ -218,7 +206,7 @@ st.markdown(
 )
 
 # 4. Encabezado Curvado
-NOMBRE_POLLERIA = "POLLERÍA MILAGRITOS"
+NOMBRE_RESTAURANTE = "CHIFA MILAGRITOS"
 
 st.markdown(
     f"""
@@ -232,7 +220,7 @@ st.markdown(
             <path id="curve" d="M 30 95 Q 300 -10 570 95" fill="transparent"/>
             <text font-family="'Helvetica Neue', sans-serif" font-size="30" font-weight="900" fill="#FF6600" letter-spacing="2" filter="url(#drop-shadow)">
                 <textPath href="#curve" startOffset="50%" text-anchor="middle">
-                    🍗 {NOMBRE_POLLERIA} 🍗
+                    🥢 {NOMBRE_RESTAURANTE} 🥢
                 </textPath>
             </text>
         </svg>
@@ -242,7 +230,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# 5. Banner de fotos (Enlaces a tus archivos en menu-polleria)
+# 5. Banner de fotos
 REPO_USER = "RESTAURATEBEF"
 REPO_NAME = "menu-polleria"
 
@@ -250,13 +238,13 @@ st.markdown(
     f"""
     <div class="food-banner-container">
         <div class="food-item">
-            <img src="https://raw.githubusercontent.com/{REPO_USER}/{REPO_NAME}/main/pollo_brasa.jpg" alt="Pollo a la Brasa">
+            <img src="https://raw.githubusercontent.com/{REPO_USER}/{REPO_NAME}/main/pollo_brasa.jpg" alt="Chifa 1">
         </div>
         <div class="food-item">
-            <img src="https://raw.githubusercontent.com/{REPO_USER}/{REPO_NAME}/main/papas.jpg" alt="Papas Fritas">
+            <img src="https://raw.githubusercontent.com/{REPO_USER}/{REPO_NAME}/main/papas.jpg" alt="Chifa 2">
         </div>
         <div class="food-item">
-            <img src="https://raw.githubusercontent.com/{REPO_USER}/{REPO_NAME}/main/gaseosa.jpg" alt="Gaseosa">
+            <img src="https://raw.githubusercontent.com/{REPO_USER}/{REPO_NAME}/main/gaseosa.jpg" alt="Chifa 3">
         </div>
     </div>
 """,
@@ -265,18 +253,10 @@ st.markdown(
 
 st.divider()
 
-# 6. Mapeo de listas para Selectbox con sus precios
-opciones_entradas = ["Ninguna"] + [
-    f"{item['nombre']} - S/ {item['precio']:.2f}"
-    for item in menu_actual.get("entradas", [])
-]
+# 6. Mapeo de lista para Selectbox sólo con Platos Principales
 opciones_segundos = ["Ninguno"] + [
     f"{item['nombre']} - S/ {item['precio']:.2f}"
     for item in menu_actual.get("segundos", [])
-]
-opciones_bebidas = ["Ninguna"] + [
-    f"{item['nombre']} - S/ {item['precio']:.2f}"
-    for item in menu_actual.get("bebidas", [])
 ]
 
 mesas = [f"Mesa {i}" for i in range(1, 16)]
@@ -301,7 +281,7 @@ total_acumulado = 0.0
 
 
 def extraer_precio(seleccion, lista_base):
-    if seleccion in ["Ninguna", "Ninguno"]:
+    if seleccion == "Ninguno":
         return 0.0, seleccion
     nombre = seleccion.split(" - S/")[0]
     for item in lista_base:
@@ -327,37 +307,19 @@ for i in range(num_personas):
         unsafe_allow_html=True,
     )
 
-    col1, col2, col3 = st.columns([1, 1, 1])
+    # Ocupa todo el ancho al ser un único selector por persona
+    seg_sel = st.selectbox(
+        "Plato Principal:", opciones_segundos, key=f"seg_{i}"
+    )
+    p_seg, n_seg = extraer_precio(seg_sel, menu_actual.get("segundos", []))
 
-    with col1:
-        ent_sel = st.selectbox(f"Entrada:", opciones_entradas, key=f"ent_{i}")
-        p_ent, n_ent = extraer_precio(
-            ent_sel, menu_actual.get("entradas", [])
-        )
-
-    with col2:
-        seg_sel = st.selectbox(
-            f"Plato Principal:", opciones_segundos, key=f"seg_{i}"
-        )
-        p_seg, n_seg = extraer_precio(
-            seg_sel, menu_actual.get("segundos", [])
-        )
-
-    with col3:
-        beb_sel = st.selectbox(f"Bebida:", opciones_bebidas, key=f"beb_{i}")
-        p_beb, n_beb = extraer_precio(beb_sel, menu_actual.get("bebidas", []))
-
-    subtotal_persona = p_ent + p_seg + p_beb
+    subtotal_persona = p_seg
     total_acumulado += subtotal_persona
 
     pedidos_realizados.append(
         {
-            "entrada": n_ent,
-            "p_entrada": p_ent,
             "segundo": n_seg,
             "p_segundo": p_seg,
-            "bebida": n_beb,
-            "p_bebida": p_beb,
             "subtotal": subtotal_persona,
         }
     )
@@ -383,7 +345,7 @@ st.markdown(
 # Observaciones Generales
 obs_input = st.text_area(
     "📝 Observaciones Generales (Opcional - Solo Letras):",
-    placeholder="EJ: BIEN DORADO, CREMAS APARTE, SIN PARSLEY...",
+    placeholder="EJ: SIN CEBOLLITA CHINA, SIN SILLAO, CAMBIAR POR TALLARIN...",
     height=80,
     key="txt_obs",
 )
@@ -428,42 +390,23 @@ st.divider()
 btn_enviar = st.button("🚀 CONFIRMAR Y ENVIAR PEDIDO")
 
 if btn_enviar:
-    hay_pedido = any(
-        p["entrada"] != "Ninguna"
-        or p["segundo"] != "Ninguno"
-        or p["bebida"] != "Ninguna"
-        for p in pedidos_realizados
-    )
+    hay_pedido = any(p["segundo"] != "Ninguno" for p in pedidos_realizados)
 
     if not hay_pedido:
         st.warning(
-            "⚠️ Por favor, selecciona al menos un producto para enviar tu"
+            "⚠️ Por favor, selecciona al menos un plato principal para enviar tu"
             " pedido."
         )
     else:
-        mensaje = f"*{NOMBRE_POLLERIA}*\n"
+        mensaje = f"*{NOMBRE_RESTAURANTE}*\n"
         mensaje += f"📍 *{mesa}* (Total personas: {num_personas})\n\n"
 
         for idx, p in enumerate(pedidos_realizados, 1):
-            if (
-                p["entrada"] != "Ninguna"
-                or p["segundo"] != "Ninguno"
-                or p["bebida"] != "Ninguna"
-            ):
+            if p["segundo"] != "Ninguno":
                 mensaje += f"*— PERSONA {idx} —*\n"
-                if p["entrada"] != "Ninguna":
-                    mensaje += (
-                        f"• *Entrada:* {p['entrada']} (S/"
-                        f" {p['p_entrada']:.2f})\n"
-                    )
-                if p["segundo"] != "Ninguno":
-                    mensaje += (
-                        f"• *Plato:* {p['segundo']} (S/ {p['p_segundo']:.2f})\n"
-                    )
-                if p["bebida"] != "Ninguna":
-                    mensaje += (
-                        f"• *Bebida:* {p['bebida']} (S/ {p['p_bebida']:.2f})\n"
-                    )
+                mensaje += (
+                    f"• *Plato:* {p['segundo']} (S/ {p['p_segundo']:.2f})\n"
+                )
 
         if observaciones.strip():
             mensaje += f"\n📝 *OBS:* {observaciones.strip()}\n"
@@ -517,38 +460,19 @@ with st.expander("🔑 Acceso Administrador (Actualizar Menú y Precios)"):
         st.success("🔓 Acceso concedido")
         st.caption(
             "Escribe un elemento por línea en el formato: Nombre - Precio (Ej:"
-            " 1/4 Pollo - 18.00)"
+            " Arroz Chaufa - 20.00)"
         )
 
-        txt_entradas_def = "\n".join(
-            [
-                f"{item['nombre']} - {item['precio']:.2f}"
-                for item in menu_actual.get("entradas", [])
-            ]
-        )
         txt_segundos_def = "\n".join(
             [
                 f"{item['nombre']} - {item['precio']:.2f}"
                 for item in menu_actual.get("segundos", [])
             ]
         )
-        txt_bebidas_def = "\n".join(
-            [
-                f"{item['nombre']} - {item['precio']:.2f}"
-                for item in menu_actual.get("bebidas", [])
-            ]
-        )
 
-        admin_ent_txt = st.text_area(
-            "Entradas y Precios:", value=txt_entradas_def, height=100
-        )
         admin_seg_txt = st.text_area(
-            "Platos Principales y Precios:", value=txt_segundos_def, height=120
+            "Platos Principales y Precios:", value=txt_segundos_def, height=150
         )
-        admin_beb_txt = st.text_area(
-            "Bebidas y Precios:", value=txt_bebidas_def, height=100
-        )
-
 
         def parsear_area(texto):
             items = []
@@ -566,12 +490,9 @@ with st.expander("🔑 Acceso Administrador (Actualizar Menú y Precios)"):
                     items.append({"nombre": linea.strip(), "precio": 0.0})
             return items
 
-
         if st.button("💾 Guardar Menú y Precios", key="btn_guardar"):
             nuevo_menu = {
-                "entradas": parsear_area(admin_ent_txt),
                 "segundos": parsear_area(admin_seg_txt),
-                "bebidas": parsear_area(admin_beb_txt),
             }
 
             guardar_menu(nuevo_menu)
