@@ -11,18 +11,18 @@ st.set_page_config(
     layout="centered",
 )
 
-# Cambiamos el nombre del archivo para forzar la actualización de la BD local
-ARCHIVO_MENU = "menu_chifa_v2.json"
+# Cambiamos la versión del archivo JSON para aplicar la nueva estructura limpia
+ARCHIVO_MENU = "menu_chifa_v3.json"
 
-# Nueva lista exacta con sus precios
+# Datos por defecto corregidos sin precios entre paréntesis en el nombre
 DATOS_POR_DEFECTO = {
     "segundos": [
         {"nombre": "Caldo de Gallina Solo", "precio": 5.0},
-        {"nombre": "Caldo de Gallina con Presa (S/ 7.00)", "precio": 7.0},
-        {"nombre": "Caldo de Gallina con Presa (S/ 6.00)", "precio": 6.0},
+        {"nombre": "Caldo de Gallina con Presa de", "precio": 7.0},
+        {"nombre": "Caldo de Gallina con Presa de", "precio": 6.0},
         {"nombre": "Chaufa de Pollo", "precio": 9.0},
-        {"nombre": "Chaufa con Alitas (S/ 12.00)", "precio": 12.0},
-        {"nombre": "Chaufa con Alitas (S/ 9.00)", "precio": 9.0},
+        {"nombre": "Chaufa con Alitas de", "precio": 12.0},
+        {"nombre": "Chaufa con Alitas de", "precio": 9.0},
         {"nombre": "Chaufa con Tortilla", "precio": 13.0},
         {"nombre": "Chaufa Salvaje", "precio": 11.0},
         {"nombre": "Chaufa Salvaje con Alitas", "precio": 14.0},
@@ -269,7 +269,7 @@ st.markdown(
 
 st.divider()
 
-# 6. Mapeo de la lista actualizada para el Selectbox
+# 6. Mapeo formateado para el Selectbox (Nombre - S/ Precio)
 opciones_segundos = ["Ninguno"] + [
     f"{item['nombre']} - S/ {item['precio']:.2f}"
     for item in menu_actual.get("segundos", [])
