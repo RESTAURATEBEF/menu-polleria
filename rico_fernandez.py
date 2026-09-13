@@ -11,10 +11,8 @@ st.set_page_config(
     layout="centered",
 )
 
-# Cambiamos la versión a v4 para forzar la actualización de la base de datos
 ARCHIVO_MENU = "menu_chifa_v4.json"
 
-# Nombres únicos para evitar duplicidad al buscar en el diccionario
 DATOS_POR_DEFECTO = {
     "segundos": [
         {"nombre": "Caldo de Gallina Solo", "precio": 5.0},
@@ -69,13 +67,12 @@ menu_actual = cargar_menu()
 st.markdown(
     """
     <style>
-    /* Ocultar barra superior, menú, pie de página y la coronita flotante */
+    /* Ocultar barra superior, menú, pie de página y coronita flotante */
     #MainMenu, header, footer {visibility: hidden !important; display: none !important;}
     .stAppViewerFooter, .stAppHeader, [data-testid="stHeader"] {display: none !important;}
     [data-testid="stStatusWidget"], [data-testid="stDecoration"] {display: none !important;}
     button[title*="Streamlit"], button[aria-label*="Streamlit"] {display: none !important;}
     
-    /* Ajuste para eliminar espacio superior de la barra oculta */
     .stApp {
         background-color: #120A05;
         color: #FFFFFF;
@@ -162,7 +159,7 @@ st.markdown(
         color: #FFFFFF !important;
     }
 
-    /* EFECTO 3D PARA ENTRADA DE TEXTO Y CONTRASEÑA */
+    /* EFECTO 3D PARA ENTRADAS DE TEXTO */
     .stTextArea textarea, .stTextInput input, .stNumberInput input {
         background-color: #2A1508 !important;
         border-radius: 12px !important;
@@ -227,7 +224,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# JavaScript para forzar la eliminación de la coronita y elementos flotantes del DOM padre
+# Ocultar la coronita y footer nativos vía JavaScript
 st.components.v1.html(
     """
     <script>
@@ -245,20 +242,20 @@ st.components.v1.html(
     height=0,
 )
 
-# 4. Encabezado Curvado
+# 4. Encabezado Curvado (TAMAÑO MÁS GRANDE)
 NOMBRE_RESTAURANTE = "CHIFA MILAGRITOS"
 
 st.markdown(
     f"""
     <div class="header-container">
-        <svg width="100%" height="110" viewBox="0 0 600 110" xmlns="http://www.w3.org/2000/svg">
+        <svg width="100%" height="140" viewBox="0 0 600 140" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <filter id="drop-shadow" x="-20%" y="-20%" width="140%" height="150%">
-                    <feDropShadow dx="0" dy="7" stdDeviation="3.5" flood-color="#000000" flood-opacity="0.95"/>
+                    <feDropShadow dx="0" dy="8" stdDeviation="4" flood-color="#000000" flood-opacity="0.95"/>
                 </filter>
             </defs>
-            <path id="curve" d="M 30 95 Q 300 -10 570 95" fill="transparent"/>
-            <text font-family="'Helvetica Neue', sans-serif" font-size="30" font-weight="900" fill="#FF6600" letter-spacing="2" filter="url(#drop-shadow)">
+            <path id="curve" d="M 20 115 Q 300 -5 580 115" fill="transparent"/>
+            <text font-family="'Helvetica Neue', sans-serif" font-size="42" font-weight="900" fill="#FF6600" letter-spacing="3" filter="url(#drop-shadow)">
                 <textPath href="#curve" startOffset="50%" text-anchor="middle">
                     🥢 {NOMBRE_RESTAURANTE} 🥢
                 </textPath>
@@ -320,7 +317,6 @@ pedidos_realizados = []
 total_acumulado = 0.0
 
 
-# Extracción exacta del precio directamente de la etiqueta seleccionada
 def extraer_precio(seleccion, lista_base):
     if seleccion == "Ninguno":
         return 0.0, seleccion
@@ -391,7 +387,7 @@ obs_input = st.text_area(
     key="txt_obs",
 )
 
-# JavaScript para restringir números sólo en el campo de observaciones
+# Restringir números en observaciones
 st.components.v1.html(
     """
     <script>
