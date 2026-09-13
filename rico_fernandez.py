@@ -11,18 +11,18 @@ st.set_page_config(
     layout="centered",
 )
 
-# ARCHIVO DE BASE DE DATOS LOCAL
-ARCHIVO_MENU = "menu_chifa_db.json"
+# Cambiamos el nombre del archivo para forzar la actualización de la BD local
+ARCHIVO_MENU = "menu_chifa_v2.json"
 
-# Datos por defecto con tu lista exacta de platos y precios
+# Nueva lista exacta con sus precios
 DATOS_POR_DEFECTO = {
     "segundos": [
         {"nombre": "Caldo de Gallina Solo", "precio": 5.0},
-        {"nombre": "Caldo de Gallina con Presa (Opción 1)", "precio": 7.0},
-        {"nombre": "Caldo de Gallina con Presa (Opción 2)", "precio": 6.0},
+        {"nombre": "Caldo de Gallina con Presa (S/ 7.00)", "precio": 7.0},
+        {"nombre": "Caldo de Gallina con Presa (S/ 6.00)", "precio": 6.0},
         {"nombre": "Chaufa de Pollo", "precio": 9.0},
-        {"nombre": "Chaufa con Alitas (Grande)", "precio": 12.0},
-        {"nombre": "Chaufa con Alitas (Personal)", "precio": 9.0},
+        {"nombre": "Chaufa con Alitas (S/ 12.00)", "precio": 12.0},
+        {"nombre": "Chaufa con Alitas (S/ 9.00)", "precio": 9.0},
         {"nombre": "Chaufa con Tortilla", "precio": 13.0},
         {"nombre": "Chaufa Salvaje", "precio": 11.0},
         {"nombre": "Chaufa Salvaje con Alitas", "precio": 14.0},
