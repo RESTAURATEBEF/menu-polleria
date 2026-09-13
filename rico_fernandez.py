@@ -14,15 +14,31 @@ st.set_page_config(
 # ARCHIVO DE BASE DE DATOS LOCAL
 ARCHIVO_MENU = "menu_chifa_db.json"
 
-# Datos por defecto orientados únicamente a Chifa
+# Datos por defecto con tu lista exacta de platos y precios
 DATOS_POR_DEFECTO = {
     "segundos": [
-        {"nombre": "Arroz Chaufa Especial", "precio": 20.0},
-        {"nombre": "Tallarín Saltado de Pollo", "precio": 18.0},
-        {"nombre": "Kam Lu Wantan", "precio": 32.0},
-        {"nombre": "Pollo Chi Jau Kay", "precio": 25.0},
-        {"nombre": "Pollo Ti Pa Kay", "precio": 25.0},
-        {"nombre": "Aeropuerto de Carne", "precio": 22.0},
+        {"nombre": "Caldo de Gallina Solo", "precio": 5.0},
+        {"nombre": "Caldo de Gallina con Presa (Opción 1)", "precio": 7.0},
+        {"nombre": "Caldo de Gallina con Presa (Opción 2)", "precio": 6.0},
+        {"nombre": "Chaufa de Pollo", "precio": 9.0},
+        {"nombre": "Chaufa con Alitas (Grande)", "precio": 12.0},
+        {"nombre": "Chaufa con Alitas (Personal)", "precio": 9.0},
+        {"nombre": "Chaufa con Tortilla", "precio": 13.0},
+        {"nombre": "Chaufa Salvaje", "precio": 11.0},
+        {"nombre": "Chaufa Salvaje con Alitas", "precio": 14.0},
+        {"nombre": "Aeropuerto de Pollo", "precio": 9.0},
+        {"nombre": "Aeropuerto con Alitas", "precio": 12.0},
+        {"nombre": "Aeropuerto con Tortilla", "precio": 13.0},
+        {"nombre": "Chaufa con Lomo", "precio": 9.0},
+        {"nombre": "Chaufa con Lomo más Alitas", "precio": 12.0},
+        {"nombre": "Combinado", "precio": 9.0},
+        {"nombre": "Combinado con Alitas", "precio": 12.0},
+        {"nombre": "Tallarín Saltado", "precio": 11.0},
+        {"nombre": "Sopa de Pollo", "precio": 9.0},
+        {"nombre": "Sopa de Kion", "precio": 9.0},
+        {"nombre": "Gaseosa de Litro", "precio": 7.0},
+        {"nombre": "Gaseosa Gordita", "precio": 5.0},
+        {"nombre": "Gaseosa Personal", "precio": 2.50},
     ]
 }
 
@@ -253,7 +269,7 @@ st.markdown(
 
 st.divider()
 
-# 6. Mapeo de lista para Selectbox sólo con Platos Principales
+# 6. Mapeo de la lista actualizada para el Selectbox
 opciones_segundos = ["Ninguno"] + [
     f"{item['nombre']} - S/ {item['precio']:.2f}"
     for item in menu_actual.get("segundos", [])
@@ -307,9 +323,8 @@ for i in range(num_personas):
         unsafe_allow_html=True,
     )
 
-    # Ocupa todo el ancho al ser un único selector por persona
     seg_sel = st.selectbox(
-        "Plato Principal:", opciones_segundos, key=f"seg_{i}"
+        "Selecciona el Plato / Bebida:", opciones_segundos, key=f"seg_{i}"
     )
     p_seg, n_seg = extraer_precio(seg_sel, menu_actual.get("segundos", []))
 
@@ -345,7 +360,7 @@ st.markdown(
 # Observaciones Generales
 obs_input = st.text_area(
     "📝 Observaciones Generales (Opcional - Solo Letras):",
-    placeholder="EJ: SIN CEBOLLITA CHINA, SIN SILLAO, CAMBIAR POR TALLARIN...",
+    placeholder="EJ: SIN CEBOLLITA CHINA, SIN SILLAO, CALDO BIEN CALIENTE...",
     height=80,
     key="txt_obs",
 )
@@ -394,8 +409,7 @@ if btn_enviar:
 
     if not hay_pedido:
         st.warning(
-            "⚠️ Por favor, selecciona al menos un plato principal para enviar tu"
-            " pedido."
+            "⚠️ Por favor, selecciona al menos un pedido para enviar la orden."
         )
     else:
         mensaje = f"*{NOMBRE_RESTAURANTE}*\n"
@@ -405,7 +419,7 @@ if btn_enviar:
             if p["segundo"] != "Ninguno":
                 mensaje += f"*— PERSONA {idx} —*\n"
                 mensaje += (
-                    f"• *Plato:* {p['segundo']} (S/ {p['p_segundo']:.2f})\n"
+                    f"• *Item:* {p['segundo']} (S/ {p['p_segundo']:.2f})\n"
                 )
 
         if observaciones.strip():
@@ -460,7 +474,7 @@ with st.expander("🔑 Acceso Administrador (Actualizar Menú y Precios)"):
         st.success("🔓 Acceso concedido")
         st.caption(
             "Escribe un elemento por línea en el formato: Nombre - Precio (Ej:"
-            " Arroz Chaufa - 20.00)"
+            " Chaufa de Pollo - 9.00)"
         )
 
         txt_segundos_def = "\n".join(
@@ -471,7 +485,7 @@ with st.expander("🔑 Acceso Administrador (Actualizar Menú y Precios)"):
         )
 
         admin_seg_txt = st.text_area(
-            "Platos Principales y Precios:", value=txt_segundos_def, height=150
+            "Lista de Platos/Bebidas y Precios:", value=txt_segundos_def, height=200
         )
 
         def parsear_area(texto):
