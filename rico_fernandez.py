@@ -69,13 +69,19 @@ menu_actual = cargar_menu()
 st.markdown(
     """
     <style>
+    /* Ocultar elementos nativos de Streamlit (Barra superior, Menú y Coronita flotante) */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    .stAppViewerFooter {display: none !important;}
+    div[data-testid="stStatusWidget"] {display: none !important;}
+    button[title="View app in Streamlit Community Cloud"] {display: none !important;}
+
     .stApp {
         background-color: #120A05;
         color: #FFFFFF;
         font-family: 'Helvetica Neue', sans-serif;
     }
-    
-    header {visibility: hidden;}
 
     .block-container {
         padding-top: 1.5rem !important;
@@ -269,7 +275,7 @@ st.markdown(
 
 st.divider()
 
-# 6. Mapeo optimizado indexado directamente por la posición elegida
+# 6. Mapeo optimizado
 lista_items = menu_actual.get("segundos", [])
 opciones_segundos = ["Ninguno"] + [
     f"{item['nombre']} - S/ {item['precio']:.2f}" for item in lista_items
@@ -296,12 +302,11 @@ pedidos_realizados = []
 total_acumulado = 0.0
 
 
-# Función ajustada para extraer el precio exactamente de la opción seleccionada
+# Extracción exacta del precio del texto visible en la opción
 def extraer_precio(seleccion, lista_base):
     if seleccion == "Ninguno":
         return 0.0, seleccion
 
-    # Extraemos el precio directamente del texto del Selectbox
     partes = seleccion.rsplit(" - S/ ", 1)
     nombre = partes[0]
     precio = float(partes[1]) if len(partes) > 1 else 0.0
@@ -342,7 +347,7 @@ for i in range(num_personas):
         }
     )
 
-# Visualización de Cuenta Total
+# Cuenta Total
 st.markdown(
     f"""
     <div style="
